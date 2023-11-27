@@ -593,6 +593,26 @@ def add_to_pic(pic_path, img_pic, size, count, mode):
 # ========================结束=================================
 
 
+ # added by thomas
+import glob
+import shutil
+def move_images(source_dir, destination_dir):
+    # 检查目标目录是否存在，如果不存在则创建
+    if not os.path.exists(destination_dir):
+        os.makedirs(destination_dir)
+
+    # 使用 glob 查找源目录中的所有图片文件
+    image_files = glob.glob(os.path.join(source_dir, '*.jpg')) + \
+                  glob.glob(os.path.join(source_dir, '*.jpeg')) + \
+                  glob.glob(os.path.join(source_dir, '*.png')) + \
+                  glob.glob(os.path.join(source_dir, '*.gif')) + \
+                  glob.glob(os.path.join(source_dir, '*.bmp'))  
+
+    # 移动每个图片文件到目标目录
+    for file in image_files:
+        shutil.move(file, destination_dir)
+        print(f"Moved {file}")
+
 def paste_file_to_folder(filepath, path, multi_part, number, part, leak_word, c_word, hack_word):  # 文件路径，番号，后缀，要移动至的位置
     filepath_obj = pathlib.Path(filepath)
     houzhui = filepath_obj.suffix
@@ -608,6 +628,10 @@ def paste_file_to_folder(filepath, path, multi_part, number, part, leak_word, c_
         create_softlink = False
         if link_mode not in (1, 2):
             shutil.move(filepath, targetpath)
+            
+            #added by thomas
+            source = os.path.dirname(filepath)
+            move_images(source, path)
         elif link_mode == 2:
             # 跨卷或跨盘符无法建立硬链接导致异常，回落到建立软链接
             try:
